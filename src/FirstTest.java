@@ -186,6 +186,14 @@ public class FirstTest {
         return element.getAttribute(attribute);
     }
 
+    private void assertElementPresent(By by, String error_message){
+        int ammount_of_elements = getAmountOfElements(by);
+        if (ammount_of_elements == 0) {
+            String default_message = "An element '" + by.toString() + "' supposed to be present";
+            throw new AssertionError(default_message + " " + error_message);
+        }
+    }
+
 
 
     @Test
@@ -260,6 +268,7 @@ public class FirstTest {
     @Test
     public void saveTwoArticleAndDeleteOne()
     {
+        click_button_skip();
         waitForElementAndClick(
                 By.xpath("//*[contains(@text,'Search Wikipedia')]"),
                 "Cannot find search input",
@@ -267,14 +276,19 @@ public class FirstTest {
         );
         String name_of_search_topic = "Java";
         waitForElementAndSendKeys(
-                By.xpath("//*[contains(@text,'Search…')]"),
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
                 name_of_search_topic,
                 "Cannot find search input",
                 5
         );
         waitForElementAndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']"),
                 "Cannot find 'Object-oriented programming language' topic",
+                5
+        );
+        waitForElementAndClick(
+                By.xpath("//*[@text='Got it']"),
+                "00000898988978",
                 5
         );
         waitForElementPresent(
@@ -325,7 +339,7 @@ public class FirstTest {
                 5
         );
         waitForElementAndSendKeys(
-                By.xpath("//*[contains(@text,'Search…')]"),
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
                 name_of_search_topic,
                 "Cannot find search input",
                 5
@@ -409,5 +423,34 @@ public class FirstTest {
                 title_result
         );
 }
+
+    @Test
+    public void assertArticleTitle(){
+        click_button_skip();
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find search input",
+                5
+        );
+
+        String search_line = "Java";
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                search_line,
+                "Cannot find search input",
+                5
+        );
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']"),
+                "Cannot find 'Object-oriented programming language' topic",
+                15
+        );
+        String title_locator = "//*[@resource-id='pcs-edit-section-title-description']";
+
+        assertElementPresent(
+                By.xpath(title_locator),
+                "Cannot find article title immediately after open"
+        );
+    }
 }
 
